@@ -1,3 +1,4 @@
+import 'package:chat_app/error_handling.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -97,23 +98,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       Navigator.pushNamed(context, ChatScreen.id);
                     }
                   } on FirebaseAuthException catch (e) {
-                    String errorMessage;
-                    switch (e.code) {
-                      case 'email-already-in-use':
-                        errorMessage = 'البريد الإلكتروني موجود';
-                        break;
-                      case 'invalid-email':
-                        errorMessage = 'البريد الإلكتروني غير صالح';
-                        break;
-                      case 'weak-password':
-                        errorMessage = 'كلمة المرور ضعيفة';
-                        break;
-                      default:
-                        errorMessage = 'حدث خطأ: ${e.message}';
-                    }
+                    String errorMessage =
+                    ErrorHandling.getErrorMessage(e.code, e.message);
                     showErrorDialog(errorMessage);
                   } catch (e) {
-                    showErrorDialog('حدث خطأ غير متوقع. حاول مرة أخرى.');
+                    showErrorDialog('Unknown Error. Try again');
                   } finally {
                     setState(() {
                       showSpinner = false;

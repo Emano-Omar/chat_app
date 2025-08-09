@@ -52,8 +52,8 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 Hero(
                   tag: 'logo',
                   child: Container(
-                    child: Image.asset('images/logo.png'),
                     height: 60.0,
+                    child: Image.asset('images/logo.png'),
                   ),
                 ),
                /* TypewriterAnimatedTextKit(

@@ -4,6 +4,7 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import '../constants.dart';
 import '../widgets/rounded_button.dart';
 import 'chat_screen.dart';
+import '../error_handling.dart';  // استدعاء كلاس ErrorHandling
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login_screen';
@@ -25,7 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('خطأ في تسجيل الدخول'),
-        content: Text(message),
         actions: [
           TextButton(
             child: const Text('حسنًا'),
@@ -96,23 +96,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.pushNamed(context, ChatScreen.id);
                     }
                   } on FirebaseAuthException catch (e) {
-                    String errorMessage;
-                    switch (e.code) {
-                      case 'invalid-email':
-                        errorMessage = 'البريد الإلكتروني غير صحيح.';
-                        break;
-                      case 'user-not-found':
-                        errorMessage = 'المستخدم غير موجود.';
-                        break;
-                      case 'wrong-password':
-                        errorMessage = 'كلمة المرور غير صحيحة.';
-                        break;
-                      default:
-                        errorMessage = 'حدث خطأ: ${e.message}';
-                    }
+                    String errorMessage =
+                    ErrorHandling.getErrorMessage(e.code, e.message);
                     showErrorDialog(errorMessage);
                   } catch (e) {
-                    showErrorDialog('حدث خطأ غير متوقع. حاول مرة أخرى.');
+                    showErrorDialog('Unknown Error. Try again');
                   } finally {
                     setState(() {
                       showSpinner = false;
