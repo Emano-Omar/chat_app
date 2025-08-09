@@ -4,7 +4,8 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import '../constants.dart';
 import '../widgets/rounded_button.dart';
 import 'chat_screen.dart';
-import '../error_handling.dart';  // استدعاء كلاس ErrorHandling
+import '../error_handling.dart';
+import '../widgets/error_dialog.dart';
 
 class LoginScreen extends StatefulWidget {
   static const String id = 'login_screen';
@@ -21,19 +22,13 @@ class _LoginScreenState extends State<LoginScreen> {
   late String email;
   late String password;
 
-  void showErrorDialog(String message) {
+  // Helper method to display error dialog
+  void _showError(String message) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('خطأ في تسجيل الدخول'),
-        actions: [
-          TextButton(
-            child: const Text('حسنًا'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-          ),
-        ],
+      builder: (ctx) => ErrorDialog(
+        title: 'خطأ في تسجيل الدخول',
+        message: message,
       ),
     );
   }
@@ -66,8 +61,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 onChanged: (value) {
                   email = value;
                 },
-                decoration:
-                kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
+                decoration: kTextFieldDecoration.copyWith(
+                  hintText: 'Enter your email',
+                ),
               ),
               const SizedBox(height: 8.0),
               TextField(
@@ -77,7 +73,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   password = value;
                 },
                 decoration: kTextFieldDecoration.copyWith(
-                    hintText: 'Enter your password'),
+                  hintText: 'Enter your password',
+                ),
               ),
               const SizedBox(height: 24.0),
               RoundedButton(
@@ -98,9 +95,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   } on FirebaseAuthException catch (e) {
                     String errorMessage =
                     ErrorHandling.getErrorMessage(e.code, e.message);
-                    showErrorDialog(errorMessage);
+                    _showError(errorMessage);
                   } catch (e) {
-                    showErrorDialog('Unknown Error. Try again');
+                    _showError('Unknown Error. Try again');
                   } finally {
                     setState(() {
                       showSpinner = false;

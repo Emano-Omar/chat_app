@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import '../constants.dart';
+import '../widgets/error_dialog.dart';
 import '../widgets/rounded_button.dart';
 import 'chat_screen.dart';
 
@@ -21,20 +22,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   late String email;
   late String password;
 
-  void showErrorDialog(String message) {
+  // Reusable method to show the error dialog
+  void _showError(String message) {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('خطأ في التسجيل'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            child: const Text('تم'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-          ),
-        ],
+      builder: (ctx) => ErrorDialog(
+        title: 'Error',
+        message: message,
       ),
     );
   }
@@ -67,8 +61,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 onChanged: (value) {
                   email = value;
                 },
-                decoration:
-                kTextFieldDecoration.copyWith(hintText: 'Enter your email'),
+                decoration: kTextFieldDecoration.copyWith(
+                  hintText: 'Enter your email',
+                ),
               ),
               const SizedBox(height: 8.0),
               TextField(
@@ -78,7 +73,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   password = value;
                 },
                 decoration: kTextFieldDecoration.copyWith(
-                    hintText: 'Enter your password'),
+                  hintText: 'Enter your password',
+                ),
               ),
               const SizedBox(height: 24.0),
               RoundedButton(
@@ -100,9 +96,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   } on FirebaseAuthException catch (e) {
                     String errorMessage =
                     ErrorHandling.getErrorMessage(e.code, e.message);
-                    showErrorDialog(errorMessage);
+                    _showError(errorMessage);
                   } catch (e) {
-                    showErrorDialog('Unknown Error. Try again');
+                    _showError('Unknown Error. Try again');
                   } finally {
                     setState(() {
                       showSpinner = false;
